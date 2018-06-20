@@ -1,0 +1,87 @@
+#@adminLayout()
+
+#define main()
+<div class="jfa-header-box" id="jfa-header-box">
+	<div class="jfa-crumbs" id="jfa-crumbs">
+		权限管理
+	</div>
+	<div class="jfa-search-box"></div>
+	#include("/_view/_admin/common/_header_right.html")
+</div>
+
+### 内容区域
+<div class="jfa-content-box" id="jfa-content-box">
+	<div class="jfa-content" id="jfa-content">
+
+		<div class="jfa-toolbar">
+			<a data-toolbar
+			   data-action="/admin/permission/sync"
+			   class="btn btn-primary btn-sm" >
+
+				<i class="fa fa-refresh"></i>
+				一键同步
+			</a>
+		</div>
+
+		<div class="jfa-table-box">
+			<table class="table table-bordered table-hover margin-bottom-10">
+				<thead>
+				<tr>
+					<th>id</th>
+					<th>actionKey</th>
+					<th>controller</th>
+					<th>备注</th>
+					<th>操作</th>
+				</tr>
+				</thead>
+				<tbody>
+				#for(x : permissionPage.getList())
+				<tr>
+					<th scope="row">#(x.id)</th>
+					<td>#(x.actionKey)</td>
+					<td>#(x.controller)</td>
+					<td>#(x.remark)</td>
+					<td class="jfa-operation-button">
+
+						#permission("/admin/permission/edit")
+						<a href="/admin/permission/edit?id=#(x.id)">
+							<i class="fa fa-pencil" title="修改"></i>
+						</a>
+						#end
+
+
+						#role("权限管理员", "CEO", "CTO")
+						<a data-delete
+						   data-title="#escape(x.actionKey)"
+						   data-action="/admin/permission/delete?id=#(x.id)">
+							<i class="fa fa-trash" title="删除"></i>
+						</a>
+						#end
+
+					</td>
+				</tr>
+				#end
+				</tbody>
+			</table>
+
+			<div>
+				#@adminPaginate(permissionPage.pageNumber, permissionPage.totalPage, "/admin/permission?p=")
+			</div>
+		</div>
+
+	</div><!-- END OF jfa-content -->
+</div><!-- END OF jfa-content-box -->
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		$(".jfa-toolbar").on("click", "a[data-toolbar]", synchronizePermission);
+	});
+
+	function synchronizePermission(event) {
+		event.preventDefault();
+		var action = $(this).attr("data-action");
+		ajaxAction(action);
+	}
+</script>
+#end
+
